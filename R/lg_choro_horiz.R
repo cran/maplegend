@@ -2,6 +2,8 @@
 #' @description This function plots a legend for a choropleth map.
 #'
 #' @param pal a set of colors.
+#' @param alpha if \code{pal} is a \link{hcl.colors} palette name, the
+#' alpha-transparency level in the range \[0,1\]
 #' @param col_na color for missing values
 #' @param pos position of the legend, one of "topleft", "top",
 #' "topright", "right", "bottomright", "bottom", "bottomleft",
@@ -37,6 +39,7 @@
 leg_choro_h <- function(pos = "left",
                         val,
                         pal = "Inferno",
+                        alpha = 1,
                         title = "Legend Title",
                         title_cex = .8 * size,
                         val_cex = .6 * size,
@@ -54,8 +57,8 @@ leg_choro_h <- function(pos = "left",
                         return_bbox = FALSE,
                         mar = par("mar"),
                         adj = c(0, 0)) {
-  insetf <- strwidth("MM", units = "user", cex = 1)
-  inset <- insetf * size
+  insetf <- xinch(par("csi"))
+  inset <- strwidth("MM", units = "user", cex = 1) * size
 
   # box size mgmt
   # box width
@@ -74,7 +77,7 @@ leg_choro_h <- function(pos = "left",
   n <- length(val) - 1
 
   # box colors
-  pal <- get_pal(pal, n)
+  pal <- get_pal(pal, n, alpha = alpha)
 
   # initiate xy leg position
   xy_leg <- NULL
@@ -93,10 +96,7 @@ leg_choro_h <- function(pos = "left",
 
 
     xy_box <- get_xy_box(
-      x = xy_title$x + (strwidth(val[1],
-        units = "user",
-        cex = val_cex, font = 1
-      ) / 2),
+      x = xy_title$x + strwidth(val[1], units = "user", cex = val_cex, font = 1) / 2,
       y = xy_title$y - inset / 3,
       n = n,
       w = w,

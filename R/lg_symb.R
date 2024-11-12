@@ -2,6 +2,8 @@
 #' @description This function can plot a legend for a symbols maps.
 #'
 #' @param pal a set of colors
+#' @param alpha if \code{pal} is a \link{hcl.colors} palette name, the
+#' alpha-transparency level in the range \[0,1\]
 #' @param col_na color for missing values
 #' @param pos position of the legend, one of "topleft", "top",
 #' "topright", "right", "bottomright", "bottom", "bottomleft",
@@ -43,6 +45,7 @@
 leg_symb <- function(pos = "left",
                      val,
                      pal = "Inferno",
+                     alpha = 1,
                      pch = seq_along(val),
                      cex = rep(1, length(val)),
                      border = "#333333",
@@ -64,36 +67,28 @@ leg_symb <- function(pos = "left",
                      return_bbox = FALSE,
                      mar = par("mar"),
                      adj = c(0, 0)) {
-  insetf <- strwidth("MM", units = "user", cex = 1)
-  inset <- insetf * size
+  insetf <- xinch(par("csi"))
+  inset <- strwidth("MM", units = "user", cex = 1) * size
 
   # box size mgmt
-  # box width
-  w <- inset
-  # box height
-  h <- inset / 1.5
-  if (length(box_cex) == 2) {
-    w <- w * box_cex[1]
-    h <- h * box_cex[2]
-  }
-
-
   n <- length(val)
-
   s_cex <- cex
   for (i in seq_along(cex)) {
     s_cex[i] <- strheight("M", units = "user", cex = s_cex[i]) * .7
   }
   w_cex <- s_cex
   h_cex <- s_cex
-  w_cex[w_cex < w] <- w
-  h_cex[h_cex < h] <- h
+
+  if (length(box_cex) == 2) {
+    w_cex <- w_cex * box_cex[1]
+    h_cex <- h_cex * box_cex[2]
+  }
+  hh <- strheight(val, units = "user", cex = val_cex)
+  h_cex[h_cex < hh] <- hh[h_cex < hh]
 
   s_cex_na <- strheight("M", units = "user", cex = cex_na) * .7
   w_cex_na <- s_cex_na
   h_cex_na <- s_cex_na
-  w_cex_na[w_cex_na < w] <- w
-  h_cex_na[h_cex_na < h] <- h
 
   xy_leg <- NULL
 
@@ -138,7 +133,7 @@ leg_symb <- function(pos = "left",
     xy_nabox_lab <- get_xy_nabox_lab(
       x = xy_title$x + max(c(w_cex, w_cex_na)) + inset / 4,
       y = xy_nabox$ytop,
-      h = h,
+      h = h_cex_na,
       no_data_txt = no_data_txt,
       val_cex = val_cex
     )
@@ -212,21 +207,29 @@ leg_symb <- function(pos = "left",
     lt <- max(c(w_cex))
   }
 
-  pal <- get_pal(pal, n)
+  pal <- get_pal(pal, n, alpha = alpha)
   mycolspt <- pal
-  mycolspt[pch %in% 21:25] <- border
+
+  if (length(pch) == 1) {
+    pch <- rep(pch, n)
+  }
+
+  if (any(pch %in% 21:25)) {
+    mycolspt[pch %in% 21:25] <- border
+  }
   mycolsptbg <- pal
 
-
-  points(
-    xy_box[[1]] + (lv - xy_box[[1]]) / 2,
-    xy_box[[2]] + (xy_box[[4]] - xy_box[[2]]) / 2,
-    col = mycolspt,
-    pch = pch,
-    cex = cex,
-    bg = mycolsptbg,
-    lwd = lwd
-  )
+  for (i in seq_along(xy_box[[1]])) {
+    points(
+      xy_box[[1]][i] + (lv - xy_box[[1]][i]) / 2,
+      xy_box[[2]][i] + (xy_box[[4]][i] - xy_box[[2]][i]) / 2,
+      col = mycolspt[i],
+      pch = pch[[i]],
+      cex = cex[i],
+      bg = mycolsptbg[i],
+      lwd = lwd[i]
+    )
+  }
   text(
     xy_box[[1]] + lt + inset / 4,
     y = xy_box[[2]] + (xy_box[[4]] - xy_box[[2]]) / 2,
@@ -236,9 +239,6 @@ leg_symb <- function(pos = "left",
     col = fg
   )
   if (no_data) {
-    # rect(xy_nabox[[1]], xy_nabox[[2]], xy_nabox[[3]], xy_nabox[[4]],
-    #      col = col_na, border = fg, lwd = .7
-    # )
     col_nafg <- col_na
     col_nafg[pch_na %in% 21:25] <- border
     col_nabg <- col_na
@@ -253,7 +253,7 @@ leg_symb <- function(pos = "left",
     )
     text(
       xy_nabox[[1]] + lt + inset / 4,
-      y = xy_nabox_lab$y,
+      y = xy_nabox[[2]] + (xy_nabox[[4]] - xy_nabox[[2]]) / 2,
       labels = no_data_txt,
       cex = val_cex,
       adj = c(0, 0.5),

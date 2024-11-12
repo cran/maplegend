@@ -2,6 +2,8 @@
 #' @description This function plots a legend for a typology map.
 #'
 #' @param pal a set of colors
+#' @param alpha if \code{pal} is a \link{hcl.colors} palette name, the
+#' alpha-transparency level in the range \[0,1\]
 #' @param col_na color for missing values
 #' @param pos position of the legend, one of "topleft", "top",
 #' "topright", "right", "bottomright", "bottom", "bottomleft",
@@ -35,6 +37,7 @@
 leg_typo <- function(pos = "topright",
                      val,
                      pal = "Inferno",
+                     alpha = 1,
                      title = "Legend Title",
                      title_cex = .8 * size,
                      val_cex = .6 * size,
@@ -51,8 +54,8 @@ leg_typo <- function(pos = "topright",
                      return_bbox = FALSE,
                      mar = par("mar"),
                      adj = c(0, 0)) {
-  insetf <- strwidth("MM", units = "user", cex = 1)
-  inset <- insetf * size
+  insetf <- xinch(par("csi"))
+  inset <- strwidth("MM", units = "user", cex = 1) * size
 
   # box size mgmt
   # box width
@@ -67,7 +70,7 @@ leg_typo <- function(pos = "topright",
   # number of boxes
   n <- length(val)
   # box colors
-  pal <- get_pal(pal, n)
+  pal <- get_pal(pal, n, alpha = alpha)
 
   # initiate xy leg position
   xy_leg <- NULL
@@ -89,12 +92,12 @@ leg_typo <- function(pos = "topright",
       n = n,
       w = w,
       h = h,
-      inset = inset / 2,
+      inset = inset / 4,
       type = "t"
     )
     xy_nabox <- get_xy_nabox(
       x = xy_title$x,
-      y = xy_box$ybottom[n] - inset / 2,
+      y = xy_box$ybottom[n] - inset / 4,
       w = w,
       h = h
     )
@@ -104,7 +107,7 @@ leg_typo <- function(pos = "topright",
       h = h,
       val = val,
       val_cex = val_cex,
-      inset = inset / 2,
+      inset = inset / 4,
       type = "t"
     )
     xy_nabox_lab <- get_xy_nabox_lab(
