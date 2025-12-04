@@ -1,6 +1,6 @@
 Package: maplegend
 Title: Legends for Maps
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     role = c("cre","aut"), comment = c(ORCID = "0000-0002-1932-3323")))
 Description: Create legends for maps and other graphics. Thematic maps need to
@@ -12,14 +12,14 @@ Depends: R (>= 4.1.0)
 Imports: graphics, grDevices
 Suggests: tinytest, covr
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Language: en-US
 URL: https://github.com/riatelab/maplegend/
 BugReports: https://github.com/riatelab/maplegend/issues/
 NeedsCompilation: no
-Packaged: 2025-06-30 13:45:34 UTC; tim
+Packaged: 2025-11-26 14:22:36 UTC; tim
 Author: Timothée Giraud [cre, aut] (ORCID:
     <https://orcid.org/0000-0002-1932-3323>)
 Maintainer: Timothée Giraud <timothee.giraud@cnrs.fr>
 Repository: CRAN
-Date/Publication: 2025-06-30 21:20:06 UTC
+Date/Publication: 2025-12-04 06:20:21 UTC
