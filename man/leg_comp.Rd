@@ -12,6 +12,7 @@ leg_comp(
   alpha = NULL,
   col = "tomato4",
   inches = 0.3,
+  val_max = NULL,
   symbol = "circle",
   self_adjust = FALSE,
   lwd = 0.7,
@@ -44,14 +45,19 @@ leg_comp(
 \item \strong{symb} for symbols maps,
 \item \strong{prop_line} for proportional lines maps,
 \item \strong{grad_line} for graduated lines maps,
-\item \strong{histo} for histograms.
+\item \strong{histo} for histograms,
+\item \strong{choro_point} for choropleth points maps,
+\item \strong{choro_line} for choropleth lines maps,
+\item \strong{choro_symb} for choropleth on symbols maps
+\item \strong{typo_line} for typology lines maps.
 }}
 
 \item{val}{vector of value(s) (for "prop" and "prop_line", at least c(min, max)
 for "cont"),
-vector of categories (for "symb" and "typo"),
-break labels (for "choro" and "grad_line"), histogram parameters
-(for "histo").}
+vector of categories (for "symb", "typo", "typo_line"),
+break labels (for "choro", "choro_point", "choro_line", "choro_symb",
+and "grad_line"),
+histogram parameters (for "histo").}
 
 \item{pal}{a color palette name or a vector of colors}
 
@@ -63,14 +69,17 @@ break labels (for "choro" and "grad_line"), histogram parameters
 \item{inches}{size of the largest symbol (radius for circles, half width
 for squares) in inches}
 
+\item{val_max}{maximum value corresponding to the largest symbol or line}
+
 \item{symbol}{type of symbols, 'circle' or 'square'}
 
 \item{self_adjust}{if TRUE values are self-adjusted to keep min, max and
 intermediate rounded values}
 
-\item{lwd}{width(s) of the symbols borders (for "prop" and "symb"),
-width of the largest line (for "prop_line"), vector of line width
-(for "grad_line")}
+\item{lwd}{width(s) of the symbols borders (for "prop", "symb",
+"choro_point", "choro_symb"),
+width of the largest line (for "prop_line"), line width (for "choro_line"
+and "typo_line"), vector of line widths (for "grad_line")}
 
 \item{border}{symbol border color(s)}
 

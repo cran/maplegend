@@ -1,5 +1,19 @@
 get_val_rnd <- function(val, val_rnd, val_dec = getOption("OutDec"), val_big = "") {
   if (is.numeric(val)) {
+    if (nchar(val_dec) > 1) {
+      warning(paste0(
+        "'val_dec' is more than one character wide; ",
+        "only the first character is used."
+      ), call. = FALSE)
+      val_dec <- substr(val_dec, 1, 1)
+    }
+    if (nchar(val_dec) < 1) {
+      warning(paste0(
+        "'val_dec' is less than one character wide; ",
+        "getOption('OutDec') is used."
+      ), call. = FALSE)
+      val_dec <- getOption("OutDec")
+    }
     val <- round(val, val_rnd)
     if (val_rnd <= 0) {
       val_rnd <- 0

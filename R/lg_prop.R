@@ -1,49 +1,9 @@
-#' Plot a legend for a proportional symbols map
-#' @description This function plots a legend for proportional symbols.
-#' @param symbol type of symbols, 'circle' or 'square'
-#' @param inches size of the biggest symbol (radius for circles, half width
-#' for squares) in inches
-#' @param pos position of the legend, one of "topleft", "top",
-#' "topright", "right", "bottomright", "bottom", "bottomleft",
-#' "left", "interactive" or a vector of two coordinates in map units
-#' (c(x, y)).
-#' @param val vector of values (at least min and max)
-#' @param title title of the legend
-#' @param title_cex size of the legend title
-#' @param val_cex size of the values in the legend
-#' @param val_rnd number of decimal places of the values in
-#' the legend.
-#' @param val_dec decimal separator
-#' @param val_big thousands separator
-#' @param frame whether to add a frame to the legend (TRUE) or not (FALSE)
-#' @param border color of the symbols borders
-#' @param size size of the legend; 2 means two times bigger
-#' @param lwd width of the symbols borders
-#' @param col color of the symbols (for "prop") or color of the lines (for
-#' "prop_line" and "grad_line")
-#' @param alpha opacity, in the range [0,1]
-#' @param bg background of the legend
-#' @param fg foreground of the legend
-#' @param return_bbox return only bounding box of the legend.
-#' No legend is plotted.
-#' @param self_adjust if TRUE values are self-adjusted to keep min, max and
-#' intermediate rounded values
-#' @param box_cex do nothing
-#' @param adj adj
-#' @param frame_border border color of the frame
-#' @keywords internal
-#' @noRd
-#' @return No return value, a legend is displayed.
-#' @import graphics
-#' @examples
-#' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
-#' leg_prop(val = c(1, 20, 100), col = "red", inches = .3)
 leg_prop <- function(pos = "left",
                      val,
                      col = "tomato4",
                      alpha = NULL,
                      inches = .3,
+                     val_max = NULL,
                      symbol = "circle",
                      border = "#333333",
                      lwd = .7,
@@ -68,6 +28,8 @@ leg_prop <- function(pos = "left",
 
   # color mgmt
   col <- ifelse(!is.null(alpha), get_hex_pal(col, alpha), col)
+  border <- border[[1]]
+  lwd <- lwd[[1]]
 
   # values & values labels
   val <- unique(val)
@@ -81,10 +43,16 @@ leg_prop <- function(pos = "left",
   # title dimensions
   title_dim <- get_title_dim(title, title_cex)
 
+  # adjust max_val
+  if (is.null(val_max)) {
+    val_max <- max(val)
+  }
+
   # largest symbol size
-  symb_sizes <- list(inches = sqrt(val * inches * inches / max(val)))
+  symb_sizes <- list(inches = sqrt(val * inches * inches / val_max))
   symb_sizes$x <- xinch(symb_sizes$inches)
   symb_sizes$y <- yinch(symb_sizes$inches)
+  inches <- max(symb_sizes$inches)
   symb_dim <- list(w = xinch(inches * 2), h = yinch(inches * 2))
 
   # label dimension
@@ -142,7 +110,23 @@ leg_prop <- function(pos = "left",
   y <- legend_coords$top - y_spacing -
     ifelse(title_dim$h != 0, title_dim$h + 2 * y_spacing * size, 0) -
     labels_dim$h_top - symb_sizes$y[1] * 2 + symb_sizes$y
+
+  lwd_seg <- ifelse(lwd <= 1.5, lwd, 1.5)
+  lwd_seg <- ifelse(lwd_seg >= .5, lwd_seg, .7)
+  lwd <- ifelse(lwd >= .5, lwd, .7)
+
   if (symbol == "circle") {
+    # line width within the circle
+    x2 <- sqrt(symb_sizes$y[1]^2 -
+      (symb_sizes$y[1] - (symb_sizes$y[1] * 2 - symb_sizes$y * 2))^2)
+    segments(
+      x0 = x[1] + x2[1],
+      x1 = x[1] + x_spacing + symb_sizes$x[1],
+      y0 = y[1] + symb_sizes$y[1],
+      y1 = y[1] + symb_sizes$y[1],
+      col = fg,
+      lwd = lwd_seg
+    )
     symbols(
       x = x,
       y = y,
@@ -151,17 +135,24 @@ leg_prop <- function(pos = "left",
       fg = border,
       lwd = lwd,
       add = TRUE,
-      inches = inches,
+      inches = inches
     )
-    # display lines
+    segments(
+      x0 = x[-1] + x2[-1],
+      x1 = x[-1] + x_spacing + symb_sizes$x[1],
+      y0 = y[-1] + symb_sizes$y[-1],
+      y1 = y[-1] + symb_sizes$y[-1],
+      col = fg,
+      lwd = lwd_seg
+    )
     segments(
       x0 = x,
-      x1 = x + x_spacing + symb_sizes$x[1],
+      x1 = x + x2,
       y0 = y + symb_sizes$y,
       y1 = y + symb_sizes$y,
-      col = border
+      col = border,
+      lwd = lwd_seg
     )
-    # display labels
     text(
       x = x + x_spacing + symb_sizes$x[1] + x_spacing,
       y = y + symb_sizes$y,
@@ -184,15 +175,14 @@ leg_prop <- function(pos = "left",
       add = TRUE,
       inches = inches * 2,
     )
-    # display lines
     segments(
       x0 = x[1] + symb_sizes$x[1],
       x1 = x[1] + symb_sizes$x[1] + x_spacing,
       y0 = y + symb_sizes$y,
       y1 = y + symb_sizes$y,
-      col = border
+      col = fg,
+      lwd = lwd_seg
     )
-    # display labels
     text(
       x = x + x_spacing + symb_sizes$x + x_spacing,
       y = y + symb_sizes$y,

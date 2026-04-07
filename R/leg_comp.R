@@ -15,17 +15,23 @@
 #' * **symb** for symbols maps,
 #' * **prop_line** for proportional lines maps,
 #' * **grad_line** for graduated lines maps,
-#' * **histo** for histograms.
+#' * **histo** for histograms,
+#' * **choro_point** for choropleth points maps,
+#' * **choro_line** for choropleth lines maps,
+#' * **choro_symb** for choropleth on symbols maps
+#' * **typo_line** for typology lines maps.
 #' @param val
 #' vector of value(s) (for "prop" and "prop_line", at least c(min, max)
 #' for "cont"),
-#' vector of categories (for "symb" and "typo"),
-#' break labels (for "choro" and "grad_line"), histogram parameters
-#' (for "histo").
+#' vector of categories (for "symb", "typo", "typo_line"),
+#' break labels (for "choro", "choro_point", "choro_line", "choro_symb",
+#' and "grad_line"),
+#' histogram parameters (for "histo").
 #' @param pal a color palette name or a vector of colors
 #' @param alpha opacity, in the range \[0,1\]
 #' @param inches size of the largest symbol (radius for circles, half width
 #' for squares) in inches
+#' @param val_max maximum value corresponding to the largest symbol or line
 #' @param border symbol border color(s)
 #' @param symbol type of symbols, 'circle' or 'square'
 #' @param self_adjust if TRUE values are self-adjusted to keep min, max and
@@ -41,9 +47,10 @@
 #' @param box_cex width and height size expansion for boxes, histogram or lines
 #' @param col color of the symbols (for "prop") or color of the lines (for
 #' "prop_line" and "grad_line")
-#' @param lwd width(s) of the symbols borders (for "prop" and "symb"),
-#' width of the largest line (for "prop_line"), vector of line width
-#' (for "grad_line")
+#' @param lwd width(s) of the symbols borders (for "prop", "symb",
+#' "choro_point", "choro_symb"),
+#' width of the largest line (for "prop_line"), line width (for "choro_line"
+#' and "typo_line"), vector of line widths (for "grad_line")
 #' @param cex size(s) of the symbols
 #' @param pch type(s) of the symbols (0:25)
 #' @param col_na color for missing values
@@ -67,6 +74,7 @@ leg_comp <- function(leg,
                      alpha = NULL,
                      col = "tomato4",
                      inches = .3,
+                     val_max = NULL,
                      symbol = "circle",
                      self_adjust = FALSE,
                      lwd = 0.7,

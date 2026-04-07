@@ -1,32 +1,34 @@
-leg_choro_h <- function(pos = "left",
-                        val,
-                        pal = "Inferno",
-                        alpha = NULL,
-                        title = "Legend Title",
-                        title_cex = .8 * size,
-                        val_cex = .6 * size,
-                        val_rnd = 0,
-                        val_dec = ".",
-                        val_big = "",
-                        col_na = "white",
-                        no_data = FALSE,
-                        no_data_txt = "No Data",
-                        frame = FALSE,
-                        frame_border = fg,
-                        box_border = "#333333",
-                        bg = "#f7f7f7",
-                        fg = "#333333",
-                        size = 1,
-                        box_cex = c(1, 1),
-                        return_bbox = FALSE,
-                        adj = c(0, 0)) {
+leg_choro_point_h <- function(pos = "left",
+                              val,
+                              pal = "Inferno",
+                              alpha = NULL,
+                              symbol = "circle",
+                              title = "Legend Title",
+                              title_cex = .8 * size,
+                              val_cex = .6 * size,
+                              val_rnd = 0,
+                              val_dec = ".",
+                              val_big = "",
+                              col_na = "white",
+                              no_data = FALSE,
+                              no_data_txt = "No Data",
+                              frame = FALSE,
+                              frame_border = fg,
+                              border = "#333333",
+                              bg = "#f7f7f7",
+                              fg = "#333333",
+                              size = 1,
+                              cex = 1,
+                              return_bbox = FALSE,
+                              adj = c(0, 0)) {
   # spacings
   x_spacing <- xinch(par("csi")) / 4
   y_spacing <- yinch(par("csi")) / 4
 
   # boxes sizes
-  w_box <- box_cex[1] * size * x_spacing * 10
-  h_box <- box_cex[2] * size * y_spacing * 10 * 1 / 6
+  w_box <- cex * size * x_spacing * 5 * 2 / 3
+  h_box <- cex * size * y_spacing * 5 * 2 / 3
+
 
   # Nb. boxes and values
   n_val <- length(val)
@@ -119,11 +121,21 @@ leg_choro_h <- function(pos = "left",
     left[i] <- x + (i - 1) * w_box
   }
   right <- left + w_box
-  rect(
-    xleft = left, ybottom = bottom, xright = right, ytop = top,
-    col = pal, border = box_border, lwd = .7
-  )
 
+  if (symbol == "square") {
+    rect(
+      xleft = left, ybottom = bottom, xright = right, ytop = top,
+      col = pal, border = border, lwd = .7
+    )
+  }
+
+  if (symbol == "circle") {
+    symbols(
+      x = left + (right - left) / 2, y = bottom + (top - bottom) / 2,
+      circles = (right - left) / 2, inches = FALSE, add = TRUE,
+      bg = pal, fg = border, lwd = .7
+    )
+  }
 
   # display labels
   y <- rep(bottom[1] - y_spacing, n_val)
@@ -139,11 +151,20 @@ leg_choro_h <- function(pos = "left",
     bottom <- bottom[1]
     top <- top[1]
     center <- legend_coords$right - y_spacing - na_label_dim$w / 2
-    rect(
-      xleft = center - w_box / 2, ybottom = bottom,
-      xright = center + w_box / 2, ytop = top,
-      col = col_na, border = box_border, lwd = .7
-    )
+    if (symbol == "square") {
+      rect(
+        xleft = center - w_box / 2, ybottom = bottom,
+        xright = center + w_box / 2, ytop = top,
+        col = col_na, border = border, lwd = .7
+      )
+    }
+    if (symbol == "circle") {
+      symbols(
+        x = center, y = bottom + (top - bottom) / 2,
+        circles = (right[1] - left[1]) / 2, inches = FALSE, add = TRUE,
+        bg = col_na, fg = border, lwd = .7
+      )
+    }
 
     # display na label
     text(

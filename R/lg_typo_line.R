@@ -1,41 +1,41 @@
-leg_typo <- function(pos = "topright",
-                     val,
-                     pal = "Inferno",
-                     alpha = NULL,
-                     title = "Legend Title",
-                     title_cex = .8 * size,
-                     val_cex = .6 * size,
-                     col_na = "white",
-                     no_data = FALSE,
-                     no_data_txt = "No Data",
-                     frame = FALSE,
-                     frame_border = fg,
-                     box_border = "#333333",
-                     bg = "#f7f7f7",
-                     fg = "#333333",
-                     size = 1,
-                     box_cex = c(1, 1),
-                     return_bbox = FALSE,
-                     adj = c(0, 0)) {
+leg_typo_line <- function(pos = "left",
+                          val,
+                          pal = "Inferno",
+                          alpha = NULL,
+                          lwd = 2,
+                          title = "Legend Title",
+                          title_cex = .8 * size,
+                          val_cex = .6 * size,
+                          col_na = "grey80",
+                          no_data = FALSE,
+                          no_data_txt = "No Data",
+                          frame = FALSE,
+                          frame_border = fg,
+                          bg = "#f7f7f7",
+                          fg = "#333333",
+                          size = 1,
+                          box_cex = c(1, 1),
+                          return_bbox = FALSE,
+                          adj = c(0, 0)) {
   # spacings
   x_spacing <- xinch(par("csi")) / 4
   y_spacing <- yinch(par("csi")) / 4
 
   # boxes sizes
   w_box <- box_cex[1] * size * x_spacing * 5
-  h_box <- box_cex[2] * size * y_spacing * 5 * 2 / 3
+  h_box <- box_cex[2] * size * y_spacing * 5 * 3 / 5
 
   # Nb. boxes and values
   n_val <- n_box <- length(val)
 
-  # box colors
+  # color mgmt
   pal <- get_pal(pal, n_box, alpha = alpha)
 
   # title dimensions
   title_dim <- get_title_dim(title, title_cex)
 
   # boxes dimensions
-  boxes_dim <- list(w = w_box, h = n_box * h_box + y_spacing * (n_box - 1))
+  boxes_dim <- list(w = w_box, h = n_box * h_box)
 
   # label dimension
   labels_dim <- list(
@@ -104,7 +104,7 @@ leg_typo <- function(pos = "topright",
     x_spacing = x_spacing, y_spacing = y_spacing
   )
 
-  # display boxes
+  # display lines
   center <- rep(NA, n_val)
   center[1] <- legend_coords$top - y_spacing -
     ifelse(title_dim$h != 0, title_dim$h + 2 * y_spacing * size, 0) -
@@ -116,11 +116,14 @@ leg_typo <- function(pos = "topright",
   }
   left <- rep(legend_coords$left + x_spacing, n_box)
   right <- left + w_box
-  top <- center + h_box / 2
-  bottom <- top - h_box
-  rect(
-    xleft = left, ybottom = bottom, xright = right, ytop = top,
-    col = pal, border = box_border, lwd = .7
+  segments(
+    x0 = left,
+    y0 = center,
+    x1 = right,
+    y1 = center,
+    col = pal,
+    lwd = lwd,
+    lend = 1
   )
 
   # display labels
@@ -132,17 +135,23 @@ leg_typo <- function(pos = "topright",
     # display na box
     left <- legend_coords$left + x_spacing
     right <- left + w_box
-    bottom <- legend_coords$bottom + y_spacing + (na_label_dim$h - na_box_dim$h) / 2
+    bottom <- legend_coords$bottom + y_spacing +
+      (na_label_dim$h - na_box_dim$h) / 2
     top <- bottom + h_box
-    rect(
-      xleft = left, ybottom = bottom, xright = right, ytop = top,
-      col = col_na, border = box_border, lwd = .7
+
+    segments(
+      x0 = left, y0 = bottom + h_box / 2, x1 = right, y1 = bottom + h_box / 2,
+      col = col_na, lwd = lwd, lend = 1
     )
 
     # display na label
     x <- legend_coords$left + x_spacing + w_box + x_spacing
     y <- bottom + (top - bottom) / 2
-    text(x = x, y = y, labels = no_data_txt, cex = val_cex, adj = c(0, 0.5), col = fg)
+    text(
+      x = x, y = y, labels = no_data_txt, cex = val_cex, adj = c(0, 0.5),
+      col = fg
+    )
   }
+
   return(invisible(NULL))
 }

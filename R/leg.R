@@ -13,13 +13,18 @@
 #' * **symb** for symbols maps,
 #' * **prop_line** for proportional lines maps,
 #' * **grad_line** for graduated lines maps,
-#' * **histo** for histograms.
+#' * **histo** for histograms,
+#' * **choro_point** for choropleth points maps,
+#' * **choro_line** for choropleth lines maps,
+#' * **choro_symb** for choropleth on symbols maps
+#' * **typo_line** for typology lines maps.
 #' @param val
 #' vector of value(s) (for "prop" and "prop_line", at least c(min, max)
 #' for "cont"),
-#' vector of categories (for "symb" and "typo"),
-#' break labels (for "choro" and "grad_line"), histogram parameters
-#' (for "histo").
+#' vector of categories (for "symb", "typo", "typo_line"),
+#' break labels (for "choro", "choro_point", "choro_line", "choro_symb",
+#' and "grad_line"),
+#' histogram parameters (for "histo").
 #' @param pos position of the legend. It can be one of 'topleft', 'top',
 #' 'topright', 'right', 'bottomright', 'bottom','bottomleft',
 #' 'left', 'interactive' or a vector of two coordinates
@@ -28,6 +33,7 @@
 #' @param alpha opacity, in the range \[0,1\]
 #' @param inches size of the largest symbol (radius for circles, half width
 #' for squares) in inches
+#' @param val_max maximum value corresponding to the largest symbol
 #' @param border symbol border color(s)
 #' @param symbol type of symbols, 'circle' or 'square'
 #' @param self_adjust if TRUE values are self-adjusted to keep min, max and
@@ -45,15 +51,17 @@
 #' @param bg background color of the legend
 #' @param fg foreground color of the legend
 #' @param box_border border color of legend boxes
-#' @param box_cex width and height size expansion for boxes, histogram or lines
+#' @param box_cex width and height size expansion for boxes, histogram
+#' circles, squares or lines
 #' @param mar plot margins
 #' @param return_bbox return only bounding box of the legend.
 #' No legend is plotted.
 #' @param col color of the symbols (for "prop") or color of the lines (for
 #' "prop_line" and "grad_line")
-#' @param lwd width(s) of the symbols borders (for "prop" and "symb"),
-#' width of the largest line (for "prop_line"), vector of line width
-#' (for "grad_line")
+#' @param lwd width(s) of the symbols borders (for "prop", "symb",
+#' "choro_point", "choro_symb"),
+#' width of the largest line (for "prop_line"), line width (for "choro_line"
+#' and "typo_line"), vector of line widths (for "grad_line")
 #' @param size size of the legend; 2 means two times bigger
 #' @param cex size(s) of the symbols
 #' @param pch type(s) of the symbols (0:25)
@@ -63,6 +71,7 @@
 #' @param horiz if TRUE plot an horizontal legend
 #' @param adj adjust the postion of the legend in x and y directions.
 #' @param frame_border border color of the frame
+#' @import graphics
 #' @return No value is returned, a legend is displayed.
 #' @export
 #' @details
@@ -72,7 +81,7 @@
 #'
 #'
 #' Relevant arguments for each specific legend types:
-#' * `leg(type = "prop", val, inches, symbol, col, lwd, border, val_rnd, val_big, val_dec, self_adjust, horiz)`
+#' * `leg(type = "prop", val, inches, val_max, symbol, col, lwd, border, val_rnd, val_big, val_dec, self_adjust, horiz)`
 #' * `leg(type = "choro", val, pal, val_rnd, val_big, val_dec, col_na, no_data, no_data_txt, box_border, box_cex, horiz)`
 #' * `leg(type = "cont", val, pal, val_rnd, val_big, val_dec, col_na, no_data, no_data_txt, box_border, box_cex, horiz)`
 #' * `leg(type = "typo", val, pal, col_na, no_data, no_data_txt, box_border, box_cex)`
@@ -80,7 +89,11 @@
 #' * `leg(type = "prop_line", val, col, lwd, val_rnd, val_big, val_dec)`
 #' * `leg(type = "grad_line", val, col, lwd, val_rnd, val_big, val_dec)`
 #' * `leg(type = "histo", val, pal, box_border, val_rnd, val_big, val_dec)`
-#'
+#' * `leg(type = "choro_point", val, pal, symbol, border, cex, val_rnd, val_big, val_dec, col_na, no_data, no_data_txt, horiz)`
+#' * `leg(type = "choro_line", val, pal, lwd, val_rnd, val_big, val_dec, col_na, no_data, no_data_txt)`
+#' * `leg(type = "choro_symb", val, pal, pch, lwd, val_rnd, val_big, val_dec, col_na, no_data, no_data_txt)`
+#' * `leg(type = "typo_line", val, pal, lwd, col_na, no_data, no_data_txt, box_cex)`
+
 #' @examples
 #' # minimal example
 #' plot.new()
@@ -95,13 +108,17 @@
 #'   type = "grad_line", val = c(1, 4, 10, 15), pos = "bottomright",
 #'   lwd = c(1, 5, 10)
 #' )
-#'
 #' plot.new()
 #' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
 #' leg(type = "prop", val = c(10, 50, 100), pos = "topleft", horiz = TRUE)
 #' leg(type = "choro", val = c(10, 20, 30, 40, 50), pos = "left", horiz = TRUE)
 #' leg(
 #'   type = "cont", val = c(10, 20, 30, 40, 50), pos = "bottomleft",
+#'   horiz = TRUE
+#' )
+#' leg(type = "choro_point", val = c(10, 20, 30, 40, 50), pos = "top")
+#' leg(
+#'   type = "choro_point", val = c(10, 20, 30, 40, 50), pos = "right",
 #'   horiz = TRUE
 #' )
 #' leg(
@@ -115,9 +132,16 @@
 #' )
 #' box()
 #'
-#' # full example
 #' plot.new()
 #' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' leg(type = "choro_line", val = c(10, 20, 30, 40, 50), pos = "topleft")
+#' leg(type = "typo_line", val = c("A", "B", "C"), pal = "Set 2", pos = "top")
+#' leg(type = "choro_symb", val = c(10, 20, 30, 40, 50), pos = "topright")
+#'
+#'
+#' # full example
+#' plot.new()
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "prop",
 #'   val = c(5, 100),
@@ -138,7 +162,7 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "choro",
 #'   alpha = 1,
@@ -155,7 +179,7 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "typo",
 #'   val = c("A", "B", "C"),
@@ -169,7 +193,7 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "symb",
 #'   val = c("A", "B", "C"),
@@ -188,7 +212,7 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "cont",
 #'   val = c(1, 2, 3, 4, 5),
@@ -202,7 +226,7 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "prop_line",
 #'   val = c(54, 505, 1025),
@@ -218,7 +242,7 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' leg(
 #'   type = "grad_line",
 #'   val = c(1.25, 4.07, 10.001, 15.071),
@@ -231,10 +255,10 @@
 #' )
 #'
 #' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
 #' set.seed(46)
 #' x <- rnorm(10000) * 1000
-#' val <- hist(x, breaks = quantile(x, 0:10/10), plot = FALSE)
+#' val <- hist(x, breaks = quantile(x, 0:10 / 10), plot = FALSE)
 #' leg(
 #'   type = "histo",
 #'   alpha = 1,
@@ -247,6 +271,73 @@
 #'   box_cex = c(1, 2),
 #'   title = "Histogram"
 #' )
+#'
+#' plot.new()
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
+#' leg(
+#'   type = "choro_point",
+#'   alpha = 1,
+#'   val = c(10, 20, 30, 40, 50),
+#'   pos = "top",
+#'   pal = c("#7F000D", "#B56C6F", "#DBBABB", "#F1F1F1"),
+#'   val_rnd = 2,
+#'   col_na = "grey",
+#'   no_data = TRUE,
+#'   no_data_txt = "No data",
+#'   border = "tomato4",
+#'   cex = 1.5,
+#'   title = "Choropleth (sequential)"
+#' )
+#'
+#' plot.new()
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
+#' leg(
+#'   type = "choro_line",
+#'   alpha = 1,
+#'   val = c(10, 20, 30, 40, 50),
+#'   pos = "top",
+#'   pal = c("#7F000D", "#B56C6F", "#DBBABB", "#F1F1F1"),
+#'   val_rnd = 1,
+#'   lwd = 4,
+#'   col_na = "grey",
+#'   no_data = TRUE,
+#'   no_data_txt = "No data",
+#'   title = "Choropleth (sequential)"
+#' )
+#'
+#' plot.new()
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
+#' leg(
+#'   type = "choro_symb",
+#'   alpha = 1,
+#'   val = c(10, 20, 30, 40, 50),
+#'   pch = 23,
+#'   pos = "top",
+#'   pal = c("#7F000D", "#B56C6F", "#DBBABB", "#F1F1F1"),
+#'   val_rnd = 1,
+#'   lwd = 1,
+#'   col_na = "grey",
+#'   no_data = TRUE,
+#'   no_data_txt = "No data",
+#'   title = "Choropleth (sequential)"
+#' )
+#'
+#' plot.new()
+#' plot.window(xlim = c(0, 1), ylim = c(0, 1))
+#' leg(
+#'   type = "typo_line",
+#'   val = c("A", "B", "C"),
+#'   lwd = 3,
+#'   pos = "top",
+#'   pal = c("red", "yellow", "green"),
+#'   col_na = "black",
+#'   no_data = TRUE,
+#'   no_data_txt = "No data",
+#'   box_cex = c(2, 1),
+#'   frame = TRUE,
+#'   title = "Typology (categories)"
+#' )
+#'
 #'
 #' # Positions
 #' plot.new()
@@ -283,6 +374,7 @@ leg <- function(type,
                 alpha = NULL,
                 col = "tomato4",
                 inches = .3,
+                val_max = NULL,
                 symbol = "circle",
                 self_adjust = FALSE,
                 lwd = 0.7,
@@ -330,15 +422,15 @@ leg <- function(type,
   }
 
   ffun <- get(paste0("leg_", type, h))
-  pf <- parent.frame()
 
   if (length(pos) == 1 && pos == "interactive") {
     args$pos <- interleg()
   }
 
+  args <- lapply(args, eval, parent.frame(), parent.frame())
   x <- grDevices::recordGraphics(
-    expr = do.call(what = ffun, args = args, envir = pf),
-    list = list(args = args, ffun = ffun, pf = pf),
+    expr = do.call(what = ffun, args = args),
+    list = list(args = args, ffun = ffun),
     env = getNamespace("maplegend")
   )
   return(invisible(x))

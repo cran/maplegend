@@ -1,46 +1,3 @@
-#' Plot a legend for a symbols map
-#' @description This function can plot a legend for a symbols maps.
-#'
-#' @param pal a set of colors
-#' @param alpha if \code{pal} is a \link{hcl.colors} palette name, the
-#' alpha-transparency level in the range \[0,1\]
-#' @param col_na color for missing values
-#' @param pos position of the legend, one of "topleft", "top",
-#' "topright", "right", "bottomright", "bottom", "bottomleft",
-#' "left", "interactive" or a vector of two coordinates in map units
-#' (c(x, y)).
-#' @param val vector of categories.
-#' @param title title of the legend
-#' @param title_cex size of the legend title
-#' @param val_cex size of the values in the legend
-#' @param no_data if TRUE a "missing value" box is plotted
-#' @param no_data_txt label for missing values.
-#' @param frame whether to add a frame to the legend (TRUE) or not (FALSE)
-#' @param border type = "prop": color of the symbols borders
-#' @param size size of the legend; 2 means two times bigger
-#' @param bg background of the legend
-#' @param fg foreground of the legend
-#' @param cex cex of the symbols
-#' @param pch pch of the symbols (0:25)
-#' @param cex_na cex of the symbols for missing values
-#' @param pch_na pch of the symbols for missing values
-#' @param lwd width of the symbols borders,
-#' @param box_cex width and height cex of boxes
-#' @param return_bbox return only bounding box of the legend.
-#' No legend is plotted.
-#' @param frame_border border color of the frame
-#' @param adj adj
-#' @keywords internal
-#' @noRd
-#' @import graphics
-#' @return No return value, a legend is displayed.
-#' @examples
-#' plot.new()
-#' plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
-#' leg_symb(
-#'   val = c("Type C", "Type D"), pal = c("cyan", "plum"),
-#'   pch = c(21, 23), cex = c(1, 2)
-#' )
 leg_symb <- function(pos = "left",
                      val,
                      pal = "Inferno",
@@ -54,7 +11,7 @@ leg_symb <- function(pos = "left",
                      val_cex = .6 * size,
                      cex_na = 1,
                      pch_na = 4,
-                     col_na = "white",
+                     col_na = "grey80",
                      no_data = FALSE,
                      no_data_txt = "No Data",
                      frame = FALSE,
@@ -75,7 +32,7 @@ leg_symb <- function(pos = "left",
   # symbol color
   col <- pbg <- get_pal(pal, n_val, alpha = alpha)
   if (any(pch %in% 21:25)) {
-    col[pch %in% 21:25] <- border
+    col[pch %in% 21:25] <- border[pch %in% 21:25]
   }
   if (no_data) {
     col_na_bg <- col_na
@@ -96,8 +53,8 @@ leg_symb <- function(pos = "left",
   # symbol sizes
   symb_sizes <- list(w = rep(NA, n_val), h = rep(NA, n_val))
   for (i in seq_len(n_val)) {
-    symb_sizes$w[i] <- strwidth("M", units = "user", cex = cex[i]) * .75
-    symb_sizes$h[i] <- strheight("M", units = "user", cex = cex[i]) * .75
+    symb_sizes$w[i] <- strwidth("M", units = "user", cex = cex[i]) * .75 * box_cex[1]
+    symb_sizes$h[i] <- strheight("M", units = "user", cex = cex[i]) * .75 * box_cex[2]
   }
 
   # title dimensions
@@ -117,8 +74,8 @@ leg_symb <- function(pos = "left",
   # NA box and label dimensions
   if (isTRUE(no_data)) {
     na_box_dim <- list(
-      w = strwidth("M", units = "user", cex = cex_na) * .75,
-      h = strheight("M", units = "user", cex = cex_na) * .75
+      w = strwidth("M", units = "user", cex = cex_na) * .75 * box_cex[1],
+      h = strheight("M", units = "user", cex = cex_na) * .75 * box_cex[2]
     )
     na_label_dim <- list(
       w = strwidth(no_data_txt, units = "user", cex = val_cex, font = 1),
@@ -136,7 +93,7 @@ leg_symb <- function(pos = "left",
       max(
         title_dim$w,
         max(symb_sizes$w) + labels_dim$w + x_spacing,
-        max(symb_sizes$w) + na_label_dim$w + x_spacing
+        max(na_box_dim$w) + na_label_dim$w + x_spacing
       ) +
       x_spacing,
     h = y_spacing +
