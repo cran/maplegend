@@ -1,6 +1,6 @@
 Package: maplegend
 Title: Legends for Maps
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     role = c("cre","aut"), comment = c(ORCID = "0000-0002-1932-3323")))
 Description: Create legends for maps and other graphics. Thematic maps need to
@@ -17,9 +17,9 @@ Language: en-US
 URL: https://github.com/riatelab/maplegend/
 BugReports: https://github.com/riatelab/maplegend/issues/
 NeedsCompilation: no
-Packaged: 2026-04-07 13:27:35 UTC; tim
+Packaged: 2026-04-09 09:56:01 UTC; tim
 Author: Timothée Giraud [cre, aut] (ORCID:
     <https://orcid.org/0000-0002-1932-3323>)
 Maintainer: Timothée Giraud <timothee.giraud@cnrs.fr>
 Repository: CRAN
-Date/Publication: 2026-04-07 14:10:02 UTC
+Date/Publication: 2026-04-10 08:00:21 UTC

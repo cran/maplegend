@@ -1,6 +1,6 @@
-a4c5262547661bba81de66ac5f9582ee *DESCRIPTION
+9fab6ebd1709951530297806944b1f8e *DESCRIPTION
 a6f119a36443cbdb4f9334e5c731c30e *NAMESPACE
-c535eaf145544a1ac32caadfb58869f1 *NEWS.md
+9c58212987302e8e96c6f717fc6c245c *NEWS.md
 a0eb57b691971766d7d5e69b23bc0e45 *R/leg.R
 07b92f35eb8c38c90f595371f8a442d1 *R/leg_comp.R
 e7d73ccba6e4ab2e94be86dec9df2bc6 *R/leg_draw.R
@@ -14,7 +14,7 @@ cbe7a90582f42ac136c517f4d8324ddb *R/lg_choro_line.R
 32d3609025756a8c34c31df7c8f1f56c *R/lg_cont.R
 b1f03d1cca9fe3af1dc5f989d784fee2 *R/lg_cont_horiz.R
 ccaa41df32ef4e523999583b76501b31 *R/lg_grad_line.R
-93eea78960908feaffe5c0012dba0863 *R/lg_prop.R
+2bf6df2a7d7a79d438ae0d619c59e331 *R/lg_prop.R
 e246c70f985bcb9975e42cf4a34cb238 *R/lg_prop_horiz.R
 c575949c219323cd3b7721564d1545ba *R/lg_prop_line.R
 2c33c8a0079339dd5c6a8162b7300ad9 *R/lg_symb.R
@@ -25,7 +25,7 @@ f2445ed3578cf2bb5328b7d28a688fb9 *R/lg_utils.R
 eaed01af1acca8634e0c1652b12b74d5 *inst/tinytest/coords.rds
 a9343e359492c62988971f4f6d0136dc *inst/tinytest/test_comp.R
 0cac3749ca3e553b277e6d1075775096 *inst/tinytest/test_coords.R
-933290e4a14d428fd9b409920fe95562 *inst/tinytest/tests.R
+aa41e41b9d3ad38812d865458fa893b3 *inst/tinytest/tests.R
 19f9b225977e75de26b4328af760383f *man/figures/README-example-1.png
 7429fe53689b3528dc38efa54e9a5290 *man/figures/README-example2-1.png
 abf33fcdf2ae1c304c8294d47a48faae *man/leg.Rd
