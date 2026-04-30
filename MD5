@@ -1,7 +1,7 @@
-39737b434b6cbcd56637cbb4a12c9e2d *DESCRIPTION
+0c6711e933c6653d3d6dac5b7c41efc0 *DESCRIPTION
 a6f119a36443cbdb4f9334e5c731c30e *NAMESPACE
-44bd0d11456d3b0f104fc2892f950ed1 *NEWS.md
-28bfa05d69b604ba95a031d2eb31e0fd *R/leg.R
+0777a7a44dc6ac2d1e7da6b83ace781c *NEWS.md
+4ea03d319c1d5e7d3c93499b61bc2e6f *R/leg.R
 07b92f35eb8c38c90f595371f8a442d1 *R/leg_comp.R
 e7d73ccba6e4ab2e94be86dec9df2bc6 *R/leg_draw.R
 9b0bebca7bb557d3311ca79a212d340f *R/leg_histo.R
@@ -20,12 +20,12 @@ c575949c219323cd3b7721564d1545ba *R/lg_prop_line.R
 2c33c8a0079339dd5c6a8162b7300ad9 *R/lg_symb.R
 1df080e8857464882c17bf83ae658a74 *R/lg_typo.R
 459e3a1761f5479fb8fec99aacedee81 *R/lg_typo_line.R
-a6d16a55d83cdc23a59723decc4507f0 *R/lg_utils.R
+a1b5532ffad036443a0e2f5767f032d4 *R/lg_utils.R
 1e90efabaa069b8800807ac18e46efc2 *README.md
 eaed01af1acca8634e0c1652b12b74d5 *inst/tinytest/coords.rds
 a9343e359492c62988971f4f6d0136dc *inst/tinytest/test_comp.R
 0cac3749ca3e553b277e6d1075775096 *inst/tinytest/test_coords.R
-169f8871fdf44386eddf200f67102c55 *inst/tinytest/tests.R
+9f7797874767a7c5147d1770b114daf6 *inst/tinytest/tests.R
 19f9b225977e75de26b4328af760383f *man/figures/README-example-1.png
 7429fe53689b3528dc38efa54e9a5290 *man/figures/README-example2-1.png
 abf33fcdf2ae1c304c8294d47a48faae *man/leg.Rd
